@@ -1,41 +1,42 @@
 <!DOCTYPE html>
 <html>
-<head><title>Dashboard</title><link rel="stylesheet" href="/style.css">
+<head>
+  <title>Dashboard</title>
+  <link rel="stylesheet" href="/style.css">
 </head>
 
 <body>
   <h1>Welcome <%= user.username %></h1>
 
   <h2>Your Categories</h2>
-  <form action="/add-category" method="POST">
-    <input name="name" placeholder="New Category">
+  <form action="/add-item" method="POST" enctype="multipart/form-data">
     <input type="hidden" name="userId" value="<%= user._id %>">
-    <button type="submit">Add</button>
-  </form>
-  <ul>
-    <% categories.forEach(c => { %>
-      <li><%= c.name %></li>
-    <% }) %>
-  </ul>
-
-  <h2>Your Items</h2>
-  <form action="/add-item" method="POST">
-    <input name="name" placeholder="Item Name">
-    <select name="category">
-      <% categories.forEach(c => { %>
-        <option value="<%= c.name %>"><%= c.name %></option>
+    
+    <label for="name">Item Name:</label>
+    <input type="text" name="name" id="name" required>
+    
+    <label for="category">Category:</label>
+    <select name="category" id="category" required>
+      <% categories.forEach(cat => { %>
+        <option value="<%= cat.name %>"><%= cat.name %></option>
       <% }) %>
     </select>
-    <input type="hidden" name="userId" value="<%= user._id %>">
-    <button type="submit">Add</button>
+    
+    <label for="image">Upload Image:</label>
+    <input type="file" name="image" id="image" accept="image/*">
+
+    <button type="submit">Add Item</button>
   </form>
 
   <h3>Wardrobe Items</h3>
   <ul>
     <% items.filter(i => i.status === "wardrobe").forEach(i => { %>
-      <li>
-        <%= i.name %> - <%= i.category %>
-        <form action="/wear-item" method="POST" style="display:inline">
+      <li style="display:flex; align-items:center; gap: 15px; margin-bottom: 12px;">
+        <% if(i.image) { %>
+          <img src="<%= i.image %>" alt="<%= i.name %>" style="height:50px; width:auto; border-radius: 6px;">
+        <% } %>
+        <span><strong><%= i.name %></strong> - <%= i.category %></span>
+        <form action="/wear-item" method="POST" style="margin-left:auto;">
           <input type="hidden" name="itemId" value="<%= i._id %>">
           <input type="hidden" name="userId" value="<%= user._id %>">
           <button type="submit">Wear</button>
@@ -47,9 +48,12 @@
   <h3>Items in Wash</h3>
   <ul>
     <% items.filter(i => i.status === "wash").forEach(i => { %>
-      <li>
-        <%= i.name %> - <%= i.category %>
-        <form action="/wash-item" method="POST" style="display:inline">
+      <li style="display:flex; align-items:center; gap: 15px; margin-bottom: 12px;">
+        <% if(i.image) { %>
+          <img src="<%= i.image %>" alt="<%= i.name %>" style="height:50px; width:auto; border-radius: 6px;">
+        <% } %>
+        <span><strong><%= i.name %></strong> - <%= i.category %></span>
+        <form action="/wash-item" method="POST" style="margin-left:auto;">
           <input type="hidden" name="itemId" value="<%= i._id %>">
           <input type="hidden" name="userId" value="<%= user._id %>">
           <button type="submit">Mark as Clean</button>
