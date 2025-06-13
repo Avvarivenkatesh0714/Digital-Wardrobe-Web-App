@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head><title>Dashboard</title><link rel="stylesheet" href="/style.css">
+</head>
+
+<body>
+  <h1>Welcome <%= user.username %></h1>
+
+  <h2>Your Categories</h2>
+  <form action="/add-category" method="POST">
+    <input name="name" placeholder="New Category">
+    <input type="hidden" name="userId" value="<%= user._id %>">
+    <button type="submit">Add</button>
+  </form>
+  <ul>
+    <% categories.forEach(c => { %>
+      <li><%= c.name %></li>
+    <% }) %>
+  </ul>
+
+  <h2>Your Items</h2>
+  <form action="/add-item" method="POST">
+    <input name="name" placeholder="Item Name">
+    <select name="category">
+      <% categories.forEach(c => { %>
+        <option value="<%= c.name %>"><%= c.name %></option>
+      <% }) %>
+    </select>
+    <input type="hidden" name="userId" value="<%= user._id %>">
+    <button type="submit">Add</button>
+  </form>
+
+  <h3>Wardrobe Items</h3>
+  <ul>
+    <% items.filter(i => i.status === "wardrobe").forEach(i => { %>
+      <li>
+        <%= i.name %> - <%= i.category %>
+        <form action="/wear-item" method="POST" style="display:inline">
+          <input type="hidden" name="itemId" value="<%= i._id %>">
+          <input type="hidden" name="userId" value="<%= user._id %>">
+          <button type="submit">Wear</button>
+        </form>
+      </li>
+    <% }) %>
+  </ul>
+
+  <h3>Items in Wash</h3>
+  <ul>
+    <% items.filter(i => i.status === "wash").forEach(i => { %>
+      <li>
+        <%= i.name %> - <%= i.category %>
+        <form action="/wash-item" method="POST" style="display:inline">
+          <input type="hidden" name="itemId" value="<%= i._id %>">
+          <input type="hidden" name="userId" value="<%= user._id %>">
+          <button type="submit">Mark as Clean</button>
+        </form>
+      </li>
+    <% }) %>
+  </ul>
+
+  <a href="/logout">Logout</a>
+</body>
+</html>
